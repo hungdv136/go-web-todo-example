@@ -2,6 +2,7 @@ package task
 
 import (
 	"net/http"
+	"strconv"
 
 	"todo/common"
 
@@ -21,8 +22,14 @@ func (r *TaskRequest) FieldMap(req *http.Request) binding.FieldMap {
 	}
 }
 
-func getAddTaskModel(c *gin.Context) (TaskRequest, error) {
+func getAddTaskModel(c *gin.Context) TaskRequest {
 	var model TaskRequest
-	err := common.Bind(c, &model)
-	return model, err
+	common.AbortWithStatusIfError(c, common.Bind(c, &model), http.StatusBadRequest)
+	return model
+}
+
+func getRequestTaskId(c *gin.Context) int {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 32)
+	common.AbortWithStatusIfError(c, err, http.StatusBadRequest)
+	return int(id)
 }

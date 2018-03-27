@@ -2,6 +2,7 @@ package user
 
 import (
 	"net/http"
+	"todo/common"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,13 +21,8 @@ func (h *HttpIdentityHandler) Build(engine *gin.Engine) {
 
 func (h *HttpIdentityHandler) loginHandler(c *gin.Context) {
 	model, err := getLoginModel(c)
-	if err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
-	}
+	common.AbortWithStatusIfError(c, err, http.StatusBadRequest)
 	token, err := h.usercase.login(model)
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-	} else {
-		c.JSON(200, token)
-	}
+	common.AbortWithStatusIfError(c, err, http.StatusInternalServerError)
+	c.JSON(200, token)
 }

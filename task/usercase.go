@@ -16,21 +16,19 @@ func (u *TaskUsercase) AddNew(task TaskRequest) (*Task, error) {
 }
 
 func (u *TaskUsercase) Fecth() ([]Task, error) {
-	tasks, err := u.repository.Fetch()
-	return tasks, err
+	return u.repository.Fetch()
 }
 
-func (u *TaskUsercase) Complete(taskId int) {
-	u.update(taskId, func(task *Task) { task.Complete() })
+func (u *TaskUsercase) Complete(taskId int) error {
+	return u.update(taskId, func(task *Task) { task.Complete() })
 }
 
-func (u *TaskUsercase) Cancel(taskId int) {
-	u.update(taskId, func(task *Task) { task.Cancel() })
+func (u *TaskUsercase) Cancel(taskId int) error {
+	return u.update(taskId, func(task *Task) { task.Cancel() })
 }
 
 func (u *TaskUsercase) GetOne(taskId int) (Task, error) {
-	task, err := u.repository.GetById(taskId)
-	return task, err
+	return u.repository.GetById(taskId)
 }
 
 func (u *TaskUsercase) update(taskId int, updator func(task *Task)) error {
