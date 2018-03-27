@@ -1,6 +1,8 @@
 package user
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,10 +19,13 @@ func (h *HttpIdentityHandler) Build(engine *gin.Engine) {
 }
 
 func (h *HttpIdentityHandler) loginHandler(c *gin.Context) {
-	model, _ := getLoginModel(c)
+	model, err := getLoginModel(c)
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+	}
 	token, err := h.usercase.login(model)
 	if err != nil {
-		c.Error(err)
+		c.AbortWithError(http.StatusInternalServerError, err)
 	} else {
 		c.JSON(200, token)
 	}

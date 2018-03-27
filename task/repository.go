@@ -7,10 +7,10 @@ import (
 )
 
 type TaskRepository interface {
-	GetById(taskId int) Task
-	Fetch() []Task
-	Add(task Task) int
-	Update(task Task)
+	GetById(taskId int) (Task, error)
+	Fetch() ([]Task, error)
+	Add(task Task) (int, error)
+	Update(task Task) error
 }
 
 type sqlTaskRepository struct {
@@ -21,33 +21,23 @@ func NewSqlRepository() TaskRepository {
 	return &sqlTaskRepository{infrastructure.GetDB()}
 }
 
-func (r *sqlTaskRepository) Add(task Task) int {
-	if err := r.db.Create(&task).Error; err != nil {
-		panic(err)
-	}
-	return task.Id
+func (r *sqlTaskRepository) Add(task Task) (int, error) {
+	err := r.db.Create(&task).Error
+	return task.Id, err
 }
 
-func (r *sqlTaskRepository) Update(task Task) {
-	if err := r.db.Update(task).Error; err != nil {
-		panic(err)
-	}
+func (r *sqlTaskRepository) Update(task Task) error {
+	return r.db.Update(task).Error
 }
 
-func (r *sqlTaskRepository) GetById(taskId int) Task {
+func (r *sqlTaskRepository) GetById(taskId int) (Task, error) {
 	var task Task
-	r.db.First(&task, taskId)
-	// if err := r.db.First(&task, taskId); err != nil {
-	// 	log.Panicln("ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR", err.Error, task)
-	// 	panic(err)
-	// }
-	return task
+	err := r.db.First(&task, taskId).Error
+	return task, err
 }
 
-func (r *sqlTaskRepository) Fetch() []Task {
+func (r *sqlTaskRepository) Fetch() ([]Task, error) {
 	var tasks []Task
-	if err := r.db.Find(tasks); err != nil {
-		panic(err)
-	}
-	return make([]Task, 5)
+	err := r.db.Find(tasks).Error
+	return make([]Task, 5), err
 }

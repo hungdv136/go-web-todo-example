@@ -12,7 +12,8 @@ import (
 
 func main() {
 	r := gin.Default()
-	infrastructure.Init()
+	db := infrastructure.Init()
+	defer db.Close()
 
 	taskRepository := task.NewSqlRepository()
 	taskUsercase := task.NewTaskUsercase(taskRepository)

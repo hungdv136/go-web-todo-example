@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"fmt"
+	"todo/configs"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -10,7 +11,7 @@ import (
 var database *gorm.DB
 
 func Init() *gorm.DB {
-	db, err := gorm.Open("mysql", "root:neogov@123@/todo")
+	db, err := gorm.Open("mysql", configs.GetConfig().GetDbHost())
 	if err != nil {
 		fmt.Println("db err: ", err)
 	}

@@ -15,7 +15,3 @@ func Bind(c *gin.Context, userStruct binding.FieldMapper) error {
 	}
 	return err
 }
-
-type ModelState struct {
-	IsValid bool
-}

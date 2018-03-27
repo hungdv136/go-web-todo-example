@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
-)
+	"todo/configs"
 
-const (
-	secretKey = "43793aad711f441cb7b69225af6b82d6"
+	jwt "github.com/dgrijalva/jwt-go"
 )
 
 func NewWithClaims(username string) (string, error) {
@@ -18,7 +16,7 @@ func NewWithClaims(username string) (string, error) {
 		"nbf":  time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
 	})
 
-	return token.SignedString([]byte(secretKey))
+	return token.SignedString([]byte(configs.GetConfig().GetJwtSecretKey()))
 }
 
 func ValidateToken(tokenString string) bool {
@@ -27,7 +25,7 @@ func ValidateToken(tokenString string) bool {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return []byte(secretKey), nil
+		return []byte(configs.GetConfig().GetJwtSecretKey()), nil
 	})
 	return err == nil && token.Valid
 }

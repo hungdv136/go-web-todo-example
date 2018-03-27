@@ -1,7 +1,6 @@
 package task
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
@@ -22,17 +21,25 @@ func (h *HttpTaskHandler) Build(engine *gin.Engine) {
 }
 
 func (h *HttpTaskHandler) addTaskHandler(c *gin.Context) {
-	model, _ := getAddTaskModel(c)
-	task := h.usercase.AddNew(model)
+	model, err := getAddTaskModel(c)
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+	}
+	task, err := h.usercase.AddNew(model)
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+	}
 	c.JSON(200, task)
 }
 
 func (h *HttpTaskHandler) getById(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 32)
-	log.Println("HEEEEEEEEEEEEEEEEEEEE", id)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	}
-	task := h.usercase.GetOne(int(id))
+	task, err := h.usercase.GetOne(int(id))
+	if err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	}
 	c.JSON(200, task)
 }
