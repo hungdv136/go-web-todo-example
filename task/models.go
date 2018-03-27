@@ -16,11 +16,15 @@ const (
 )
 
 type Task struct {
-	Id      int
-	UserId  int
-	Title   string
-	Content string
-	Status  Status
+	Id      int    `gorm:"column:Id;AUTO_INCREMENT;primary_key"`
+	UserId  int    `gorm:"column:UserId"`
+	Title   string `gorm:"column:Title;type:varchar(250)"`
+	Content string `gorm:"column:Content"`
+	Status  Status `gorm:"column:Status"`
+}
+
+func (Task) TableName() string {
+	return "task"
 }
 
 func CreateTask(userId int, title string, content string) *Task {

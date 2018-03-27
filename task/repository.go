@@ -1,30 +1,53 @@
 package task
 
+import (
+	"todo/infrastructure"
+
+	"github.com/jinzhu/gorm"
+)
+
 type TaskRepository interface {
-	Add(userId int, title string, content string) *Task
-	Complete(task *Task)
-	Cancel(task *Task)
-	Start(task *Task)
+	GetById(taskId int) Task
+	Fetch() []Task
+	Add(task Task) int
+	Update(task Task)
 }
 
-type sqlTaskRepository struct{}
+type sqlTaskRepository struct {
+	db *gorm.DB
+}
 
 func NewSqlRepository() TaskRepository {
-	return &sqlTaskRepository{}
+	return &sqlTaskRepository{infrastructure.GetDB()}
 }
 
-func (repository *sqlTaskRepository) Add(userId int, title string, content string) *Task {
-	return CreateTask(userId, title, content)
+func (r *sqlTaskRepository) Add(task Task) int {
+	if err := r.db.Create(&task).Error; err != nil {
+		panic(err)
+	}
+	return task.Id
 }
 
-func (repository *sqlTaskRepository) Complete(task *Task) {
-	task.Complete()
+func (r *sqlTaskRepository) Update(task Task) {
+	if err := r.db.Update(task).Error; err != nil {
+		panic(err)
+	}
 }
 
-func (repository *sqlTaskRepository) Cancel(task *Task) {
-	task.Cancel()
+func (r *sqlTaskRepository) GetById(taskId int) Task {
+	var task Task
+	r.db.First(&task, taskId)
+	// if err := r.db.First(&task, taskId); err != nil {
+	// 	log.Panicln("ERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR", err.Error, task)
+	// 	panic(err)
+	// }
+	return task
 }
 
-func (repository *sqlTaskRepository) Start(task *Task) {
-	task.Start()
+func (r *sqlTaskRepository) Fetch() []Task {
+	var tasks []Task
+	if err := r.db.Find(tasks); err != nil {
+		panic(err)
+	}
+	return make([]Task, 5)
 }

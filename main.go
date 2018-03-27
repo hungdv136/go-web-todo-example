@@ -1,6 +1,7 @@
 package main
 
 import (
+	"todo/infrastructure"
 	"todo/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -11,10 +12,13 @@ import (
 
 func main() {
 	r := gin.Default()
+	infrastructure.Init()
 
 	taskRepository := task.NewSqlRepository()
-	taskHandler := task.NewTaskHandler(taskRepository)
-	userHandler := user.NewUserHandler()
+	taskUsercase := task.NewTaskUsercase(taskRepository)
+	taskHandler := task.NewHttpTaskHandler(taskUsercase)
+	identityUsercase := user.NewIdentityUsercase()
+	userHandler := user.NewHttpIdentityHandler(identityUsercase)
 
 	userHandler.Build(r)
 	r.Use(middleware.Authentication())

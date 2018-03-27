@@ -1,9 +1,10 @@
 package user
 
 type User struct {
-	Id       int
-	Username string
-	Name     string
+	Id           int
+	Username     string
+	Name         string
+	PasswordHash string
 }
 
 type LoginModel struct {
