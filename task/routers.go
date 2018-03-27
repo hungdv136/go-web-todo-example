@@ -3,6 +3,7 @@ package task
 import (
 	"net/http"
 	"todo/common"
+	"todo/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,9 +17,10 @@ func NewHttpTaskHandler(usercase TaskUsercase) HttpTaskHandler {
 }
 
 func (h *HttpTaskHandler) Build(engine *gin.Engine) {
-	engine.POST("task/add", h.addTaskHandler)
-	engine.GET("task/:id", h.getById)
-	engine.POST("task/complete/:id", h.complete)
+	authMiddleware := middleware.Authentication()
+	engine.POST("task/add", authMiddleware, h.addTaskHandler)
+	engine.GET("task/:id", authMiddleware, h.getById)
+	engine.POST("task/complete/:id", authMiddleware, h.complete)
 }
 
 func (h *HttpTaskHandler) addTaskHandler(c *gin.Context) {

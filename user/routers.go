@@ -20,8 +20,7 @@ func (h *HttpIdentityHandler) Build(engine *gin.Engine) {
 }
 
 func (h *HttpIdentityHandler) loginHandler(c *gin.Context) {
-	model, err := getLoginModel(c)
-	common.AbortWithStatusIfError(c, err, http.StatusBadRequest)
+	model := getLoginModel(c)
 	token, err := h.usercase.login(model)
 	common.AbortWithStatusIfError(c, err, http.StatusInternalServerError)
 	c.JSON(200, token)

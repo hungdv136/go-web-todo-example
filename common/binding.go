@@ -7,11 +7,7 @@ import (
 	"github.com/mholt/binding"
 )
 
-func Bind(c *gin.Context, userStruct binding.FieldMapper) error {
+func Bind(c *gin.Context, userStruct binding.FieldMapper) {
 	err := binding.Bind(c.Request, userStruct)
-	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return err
-	}
-	return err
+	AbortWithStatusIfError(c, err, http.StatusBadRequest)
 }

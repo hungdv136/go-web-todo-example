@@ -20,8 +20,8 @@ func (r *LoginModel) FieldMap(req *http.Request) binding.FieldMap {
 	}
 }
 
-func getLoginModel(c *gin.Context) (LoginModel, error) {
+func getLoginModel(c *gin.Context) LoginModel {
 	var model LoginModel
-	err := common.Bind(c, &model)
-	return model, err
+	common.Bind(c, &model)
+	return model
 }

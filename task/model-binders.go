@@ -24,7 +24,7 @@ func (r *TaskRequest) FieldMap(req *http.Request) binding.FieldMap {
 
 func getAddTaskModel(c *gin.Context) TaskRequest {
 	var model TaskRequest
-	common.AbortWithStatusIfError(c, common.Bind(c, &model), http.StatusBadRequest)
+	common.Bind(c, &model)
 	return model
 }
 

@@ -2,7 +2,6 @@ package main
 
 import (
 	"todo/infrastructure"
-	"todo/middleware"
 
 	"github.com/gin-gonic/gin"
 
@@ -22,10 +21,7 @@ func main() {
 	userHandler := user.NewHttpIdentityHandler(identityUsercase)
 
 	userHandler.Build(r)
-	r.Use(middleware.Authentication())
-	{
-		taskHandler.Build(r)
-	}
+	taskHandler.Build(r)
 
 	r.Run(":4200")
 }
