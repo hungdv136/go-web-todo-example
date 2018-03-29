@@ -1,8 +1,8 @@
-package infrastructure
+package database
 
 import (
 	"fmt"
-	"todo/configs"
+	"todo/config"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -11,15 +11,11 @@ import (
 var database *gorm.DB
 
 func Init() *gorm.DB {
-	db, err := gorm.Open("mysql", configs.GetConfig().GetDbHost())
+	db, err := gorm.Open("mysql", config.GetConfig().GetDbHost())
 	if err != nil {
-		fmt.Println("db err: ", err)
+		fmt.Println("database init error: ", err)
 	}
 	db.DB().SetMaxIdleConns(10)
 	database = db
-	return database
-}
-
-func GetDB() *gorm.DB {
 	return database
 }

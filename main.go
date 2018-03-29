@@ -1,7 +1,8 @@
 package main
 
 import (
-	"todo/infrastructure"
+	"todo/infrastructure/cache"
+	"todo/infrastructure/database"
 
 	"github.com/gin-gonic/gin"
 
@@ -10,18 +11,23 @@ import (
 )
 
 func main() {
-	r := gin.Default()
-	db := infrastructure.Init()
-	defer db.Close()
+	engine := gin.Default()
+	db := database.Init()
+	cache := cache.Init()
 
-	taskRepository := task.NewSqlRepository()
+	defer func() {
+		db.Close()
+		cache.Empty()
+	}()
+
+	taskRepository := task.NewSqlRepository(db)
 	taskUsercase := task.NewTaskUsercase(taskRepository)
 	taskHandler := task.NewHttpTaskHandler(taskUsercase)
 	identityUsercase := user.NewIdentityUsercase()
 	userHandler := user.NewHttpIdentityHandler(identityUsercase)
 
-	userHandler.Build(r)
-	taskHandler.Build(r)
+	userHandler.Build(engine)
+	taskHandler.Build(engine)
 
-	r.Run(":4200")
+	engine.Run(":4200")
 }

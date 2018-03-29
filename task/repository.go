@@ -1,8 +1,6 @@
 package task
 
 import (
-	"todo/infrastructure"
-
 	"github.com/jinzhu/gorm"
 )
 
@@ -17,8 +15,8 @@ type sqlTaskRepository struct {
 	db *gorm.DB
 }
 
-func NewSqlRepository() TaskRepository {
-	return &sqlTaskRepository{infrastructure.GetDB()}
+func NewSqlRepository(db *gorm.DB) TaskRepository {
+	return &sqlTaskRepository{db}
 }
 
 func (r *sqlTaskRepository) Add(task Task) (int, error) {
